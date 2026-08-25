@@ -2451,62 +2451,245 @@ con Grupo MyB.
 
 <script>
 
-
 /* =============================
 WHATSAPP
 ============================= */
 
-const numeroWhatsApp =
-"5492664776266";
+const numeroWhatsApp = "5492664776266";
 
+
+function registrarContacto(){
+
+    if(typeof fbq === "function"){
+        fbq('track', 'Contact');
+        console.log("Meta Pixel: Contact enviado");
+    }
+
+}
 
 
 function enviarWhatsApp(){
 
+    const input = document.getElementById("nombre");
+    const nombre = input.value.trim();
 
-const input =
-document.getElementById("nombre");
+    if(nombre === ""){
 
+        alert("Por favor escribí tu nombre.");
+        input.focus();
+        return;
 
-const nombre =
-input.value.trim();
+    }
 
+    /* REGISTRAMOS EL CONTACTO */
+    registrarContacto();
 
+    const mensaje =
+    `Hola Grupo MyB, soy ${nombre}. Quiero información para conocer la propuesta y saber cómo puedo sumarme al equipo de trabajo.`;
 
-if(nombre === ""){
+    const url =
+    `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
 
-
-alert(
-"Por favor escribí tu nombre."
-);
-
-
-input.focus();
-
-
-return;
-
-}
-
-
-
-/* REGISTRA CONTACTO EN META */
-
-if(typeof fbq !== "undefined"){
-
-fbq(
-'track',
-'Contact'
-);
+    window.open(url, "_blank");
 
 }
 
 
+function whatsappGeneral(){
 
-const mensaje =
+    registrarContacto();
 
-`Hola Grupo MyB, soy ${nombre}. Quiero información para conocer la propuesta y saber cómo puedo sumarme al equipo de trabajo.`;
+    const mensaje =
+    "Hola Grupo MyB. Quiero información para conocer la propuesta y saber cómo puedo pertenecer al equipo de trabajo.";
+
+    const url =
+    `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, "_blank");
+
+}
+
+
+/* =============================
+REFERENCIAS
+============================= */
+
+const mensajes = [
+
+    "Mateo conoció la propuesta de Grupo MyB desde La Pampa y comenzó a organizar su actividad.",
+
+    "Carla conoció Grupo MyB desde Córdoba y comenzó a formar su propio equipo de trabajo.",
+
+    "Sofía se sumó desde Mendoza y empezó a conocer la propuesta trabajando desde su celular.",
+
+    "Lucas se contactó desde Buenos Aires para conocer cómo funciona Grupo MyB.",
+
+    "Micaela llegó desde Santa Fe y comenzó a organizar su actividad dentro de la red.",
+
+    "Rocío conoció Grupo MyB desde San Luis y empezó a trabajar desde casa.",
+
+    "Nicolás se contactó desde Neuquén interesado en conocer Multipanel y Fabicom.",
+
+    "Florencia conoció la propuesta desde Tucumán y comenzó a informarse para formar su equipo.",
+
+    "Mariana llegó desde Entre Ríos buscando una alternativa que pudiera manejar desde su celular.",
+
+    "Agustín se contactó desde Río Negro para conocer la dinámica de trabajo de Grupo MyB."
+
+];
+
+
+let indiceMensaje = 0;
+
+const notification =
+document.getElementById("notification");
+
+const notificationText =
+document.getElementById("notificationText");
+
+
+function mostrarNotificacion(){
+
+    if(!notification || !notificationText){
+        return;
+    }
+
+    notificationText.textContent =
+    mensajes[indiceMensaje];
+
+    notification.classList.remove("hide");
+    notification.classList.add("show");
+
+
+    setTimeout(()=>{
+
+        notification.classList.remove("show");
+        notification.classList.add("hide");
+
+    },3800);
+
+
+    indiceMensaje++;
+
+    if(indiceMensaje >= mensajes.length){
+        indiceMensaje = 0;
+    }
+
+}
+
+
+setTimeout(()=>{
+
+    mostrarNotificacion();
+
+    setInterval(
+        mostrarNotificacion,
+        5000
+    );
+
+},1500);
 
 
 
-const url =
+/* =============================
+SLIDER
+============================= */
+
+const sliderTrack =
+document.getElementById("sliderTrack");
+
+const slides =
+document.querySelectorAll(".slide");
+
+let slideActual = 0;
+
+
+function moverSlider(){
+
+    if(!sliderTrack || slides.length === 0){
+        return;
+    }
+
+    const anchoSlide =
+    slides[0].offsetWidth + 16;
+
+
+    if(window.innerWidth <= 820){
+
+        slideActual++;
+
+        if(slideActual >= slides.length){
+            slideActual = 0;
+        }
+
+    }else{
+
+        slideActual++;
+
+        if(slideActual > slides.length - 2){
+            slideActual = 0;
+        }
+
+    }
+
+
+    sliderTrack.style.transform =
+    `translateX(-${slideActual * anchoSlide}px)`;
+
+}
+
+
+setInterval(
+    moverSlider,
+    3200
+);
+
+
+
+/* =============================
+ANIMACIONES
+============================= */
+
+const elementos =
+document.querySelectorAll(".reveal");
+
+
+const observer =
+new IntersectionObserver(
+
+    (entries)=>{
+
+        entries.forEach((entry)=>{
+
+            if(entry.isIntersecting){
+
+                entry.target.classList.add("visible");
+
+                observer.unobserve(
+                    entry.target
+                );
+
+            }
+
+        });
+
+    },
+
+    {
+        threshold:.10
+    }
+
+);
+
+
+elementos.forEach((elemento)=>{
+
+    observer.observe(elemento);
+
+});
+
+</script>
+
+</body>
+
+</html>
